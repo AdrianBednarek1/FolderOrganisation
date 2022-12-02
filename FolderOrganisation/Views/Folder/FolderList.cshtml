@@ -1,0 +1,31 @@
+﻿@model IEnumerable<FolderOrganisation.DataContext.Folder>
+
+@{
+    ViewBag.Title = "FolderList";
+}
+
+<h2>FolderList</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayFor(model => model.First().CurrentFolder) |
+            @Html.ActionLink("Add new folder", "Create")
+        </th>
+    </tr>
+    @foreach (var item in Model.First().SubFolders)
+    {
+        <tr>
+            <td>
+                @{
+                    string parametar = Path.GetFileName(item.CurrentFolder);
+                }
+                @Html.DisplayFor(modelItem => parametar)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit") |
+                @Html.ActionLink("Delete", "Delete")
+            </td>
+        </tr>
+    }
+</table>

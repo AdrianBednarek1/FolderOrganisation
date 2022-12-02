@@ -16,7 +16,7 @@ namespace FolderOrganisation
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Folder", action = "FolderList", id = UrlParameter.Optional }
             );
         }
     }
