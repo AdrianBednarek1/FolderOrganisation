@@ -9,5 +9,7 @@ namespace FolderOrganisation.DataContext
     public class DatabaseFolder : DbContext
     {
         public DbSet<Folder> DbFolders { get; set; }
+
+        public System.Data.Entity.DbSet<FolderOrganisation.ViewModels.ModelViewFolder> ModelViewFolders { get; set; }
     }
 }

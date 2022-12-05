@@ -1,0 +1,47 @@
+﻿@model FolderOrganisation.ViewModels.ModelViewFolder
+
+@{
+    ViewBag.Title = "FolderList";
+}
+
+<h2>FolderList</h2>
+@{bool buttonIsHidden = false; }
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayFor(m => m.FullDirectory) |
+            @*@Html.HiddenFor(model => model.ParentFolder, Model.CurrentFolder);
+            @Html.TextBox("ParentFolder",Model.CurrentFolder)*@
+            @*@Html.ActionLink("Create", "Create", new { id = Model.Id })*@
+        </th>
+    </tr>
+    @foreach (var item in Model.SubFolders)
+    {
+        <tr>
+            <td>
+                @{
+                    string parametar = Path.GetFileName(item.FullDirectory);
+                }              
+                @Html.ActionLink(parametar, "FolderList", item)
+            </td>   
+            <td>
+                @Html.ActionLink("Edit", "Edit") |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+</table>
+<script>
+    function hide(x) {
+        x.hidden = "hidden";
+        @{ 
+            buttonIsHidden = true;
+        }
+    }
+</script>
+<script>
+    function show(x)
+    {
+        x.hidden = false;
+    }
+</script>

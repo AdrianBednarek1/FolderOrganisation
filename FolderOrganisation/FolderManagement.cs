@@ -1,6 +1,5 @@
 ﻿using FolderOrganisation.DataContext;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,25 +11,28 @@ namespace FolderOrganisation
         private string path = @"C:\FolderOrganisation";
         public FolderManagement()
         {
-            CheckDirectory();
+            CreateStartingDirectory();
         }
-
-        private void CheckDirectory()
+        private void CreateStartingDirectory()
         {
-            if (Directory.Exists(path)) return;
-            CreateNewDirectory();
-        }
-
-        private void CreateNewDirectory()
-        {
-            Directory.CreateDirectory(path);
+            if(!CreateDirectory(path)) return;
             for (int i = 1; i < 4; i++)
             {
                 string map = Path.Combine(path, "Mapa" + i);
-                Directory.CreateDirectory(map);
+                CreateDirectory(map);
             }
         }
-
+        public bool CreateDirectory(string _path)
+        {
+            if (Directory.Exists(_path)) return false;
+            Directory.CreateDirectory(_path);
+            return true;
+        }
+        public async Task DeleteDirectory(string _path)
+        {
+            if (!Directory.Exists(_path)) return;
+            Directory.Delete(_path);
+        }
         public async Task<Folder> GetFolders()
         {
             DirectoryInfo mainDirectory = new DirectoryInfo(path);
