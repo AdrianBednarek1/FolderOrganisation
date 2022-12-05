@@ -29,8 +29,10 @@ namespace FolderOrganisation.Repository
 
         public async Task Delete(Folder folder)
         {
+            bool directoryDeleted = await folderManagement.DeleteDirectory(folder.CurrentFolder);
+            if (!directoryDeleted) return;
             DbFolder.DbFolders.Remove(folder);
-            await folderManagement.DeleteDirectory(folder.CurrentFolder);
+            await DbFolder.SaveChangesAsync();
         }
 
         private async Task RefreshDb()
@@ -42,15 +44,15 @@ namespace FolderOrganisation.Repository
         }
         public async Task CreateFolder(Folder createFolder)
         {
-            string pathFOlder= Path.Combine(createFolder.CurrentFolder, "blabal");
-            if (!folderManagement.CreateDirectory(pathFOlder)) return;
-            await CreateNewFolder(new Folder(pathFOlder,createFolder));
+            string path = createFolder.CurrentFolder;
+            if (!folderManagement.CreateDirectory(path)) return;
+            await CreateNewFolder(createFolder);
         }
 
         private async Task CreateNewFolder(Folder createFolder)
         {
-            Folder folder = DbFolder.DbFolders.FirstOrDefault(target => target.Id==createFolder.ParentFolder.Id);
-            folder.SubFolders.Add(createFolder);
+            Folder parent = DbFolder.DbFolders.FirstOrDefault(target => target.Id==createFolder.ParentFolder.Id);
+            parent.SubFolders.Add(createFolder);
             await DbFolder.SaveChangesAsync();
         }
         public async Task<Folder> Search(int id)

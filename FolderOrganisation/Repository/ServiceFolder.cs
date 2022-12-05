@@ -16,9 +16,10 @@ namespace FolderOrganisation.Repository
             Folder folder = await repositoryFolder.Search(id);
             await repositoryFolder.Delete(folder);
         }
-        public static async Task Create(int id)
+        public static async Task Create(ModelViewFolder model)
         {
-            Folder folder = await repositoryFolder.Search(id);
+            Folder parent = await repositoryFolder.Search(model.Parent);
+            Folder folder = new Folder(model.FullDirectory, parent);
             await repositoryFolder.CreateFolder(folder);
         }
     }

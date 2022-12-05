@@ -9,14 +9,17 @@
     <tr>
         <th>
             @Model.FullDirectory |
+            @Model.Id |  
             <button id="create" onclick="hideOrShow(@Model.Id),CreateOrCancel(id)">Create folder</button>
         </th>
     </tr>
     <tr>
         <th>
-            @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = Model.Id, @hidden = true }))
+            @using (Html.BeginForm("Create", "Folder", FormMethod.Post, new { id = Model.Id, @hidden = true }))
             {
                 @Html.TextBoxFor(m => m.Name, new { Value = "" })
+                @Html.HiddenFor(m => m.Parent, new { Value = Model.Id });
+                @Html.HiddenFor(m => m.Directory, new { Value = Model.FullDirectory });
                 <input type="submit" />
             }
         </th>

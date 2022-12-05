@@ -1,5 +1,6 @@
 ﻿using FolderOrganisation.DataContext;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,10 +29,14 @@ namespace FolderOrganisation
             Directory.CreateDirectory(_path);
             return true;
         }
-        public async Task DeleteDirectory(string _path)
+        public async Task<bool> DeleteDirectory(string path)
         {
-            if (!Directory.Exists(_path)) return;
-            Directory.Delete(_path);
+            if (!Directory.Exists(path)) return false;
+            List<string> paths = new List<string>();
+            paths.AddRange(Directory.GetDirectories(path).ToList());
+            foreach (var item in paths){await DeleteDirectory(item);}
+            Directory.Delete(path);
+            return true;
         }
         public async Task<Folder> GetFolders()
         {
