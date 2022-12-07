@@ -1,6 +1,7 @@
 ﻿using FolderOrganisation.DataContext;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
@@ -9,10 +10,12 @@ namespace FolderOrganisation.ViewModels
     public class ModelViewFolder
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Directory { get; set; }
         public string FullDirectory { get { return Path.Combine(Directory, Name); } }
-        public int Parent { get; set; }
+        public int? Parent { get; set; }
+        public int SubFoldersCount { get { return SubFolders.Count(); } }
         public List<ModelViewFolder> SubFolders { get; set; }
         public ModelViewFolder()
         {
@@ -28,7 +31,7 @@ namespace FolderOrganisation.ViewModels
             SubFolders = new List<ModelViewFolder>();
             FillSubFolders(model.SubFolders);
         }
-        public ModelViewFolder(Folder model, int parentId)
+        public ModelViewFolder(Folder model, int? parentId)
         {
             Id = model.Id;
             Name = Path.GetFileName(model.CurrentFolder);

@@ -1,16 +1,15 @@
 ﻿@model FolderOrganisation.ViewModels.ModelViewFolder
-
 @{
     ViewBag.Title = "ModelFolderList";
 }
-@{bool buttonIsHidden = false; }
-<h2>ModelFolderList</h2>
+<h2>Folder List</h2>
+
 <table class="table">
     <tr>
-        <th>
-            @Model.FullDirectory |
-            @Model.Id |  
-            <button id="create" onclick="hideOrShow(@Model.Id),CreateOrCancel(id)">Create folder</button>
+        <th>           
+            @Model.FullDirectory | <button id="create" onclick="hideOrShow(@Model.Id), createOrCancel(id)">Create folder</button>
+            @if (Model.Parent != 0)
+            {@Html.ActionLink("Back", "FolderList", new { currentFolderId = Model.Parent }, new { @class = "btn btn-info" })}
         </th>
     </tr>
     <tr>
@@ -20,6 +19,7 @@
                 @Html.TextBoxFor(m => m.Name, new { Value = "" })
                 @Html.HiddenFor(m => m.Parent, new { Value = Model.Id });
                 @Html.HiddenFor(m => m.Directory, new { Value = Model.FullDirectory });
+                @Html.Hidden("currentFolderId", Model.Id);
                 <input type="submit" />
             }
         </th>
@@ -28,24 +28,24 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.ActionLink(item.Name, "FolderList", new { currentFolderId = item.Id })
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                @Html.ActionLink(
+                "Delete", "Delete", 
+                new { deleteFolderId = item.Id, currentFolderId = item.Parent }, 
+                new { onclick = item.SubFoldersCount>0 ? "return confirm('This folder contains subfolders. Delete anyway?');" : null })
             </td>
         </tr>
     }
 </table>
-
 <script>
     function hideOrShow(x) {
         document.getElementById(x).hidden = !document.getElementById(x).hidden;
     }
-    function CreateOrCancel(x) {
+    function createOrCancel(x) {
         if (document.getElementById(x).innerText == "Cancel") {
-
             document.getElementById(x).innerText = "Create Folder";
         }
         else {

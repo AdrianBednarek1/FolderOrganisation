@@ -9,21 +9,21 @@ namespace FolderOrganisation.Controllers
 {
     public class FolderController : Controller
     {   
-        public async Task<ActionResult> FolderList(ModelViewFolder folder)
+        public async Task<ActionResult> FolderList(int? currentFolderId)
         {
-            ModelViewFolder modelFolder;
-            modelFolder = String.IsNullOrEmpty(folder.Name) ? await ServiceFolder.GetFolders() : folder;
+            ModelViewFolder modelFolder = await ServiceFolder.GetFolders(currentFolderId);
             return View(modelFolder);
         }
-        public async Task<ActionResult> Create(ModelViewFolder model)
-        {       
+        public async Task<ActionResult> Create(ModelViewFolder model, int? currentFolderId)
+        {   
+            if (!ModelState.IsValid) return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
             await ServiceFolder.Create(model);
-            return RedirectToAction("FolderList");
+            return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
         }
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int deleteFolderId, int? currentFolderId)
         {
-            await ServiceFolder.Delete(id);
-            return RedirectToAction("FolderList");
+            await ServiceFolder.Delete(deleteFolderId);
+            return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
         }
     }
 }

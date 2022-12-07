@@ -21,43 +21,36 @@ namespace FolderOrganisation.Repository
             DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
             DbFolder.SaveChanges();
         }
-        public async Task<Folder> GetFolders()
-        {
-            await RefreshDb();
-            return DbFolder.DbFolders.First();
-        }
-
         public async Task Delete(Folder folder)
         {
-            bool directoryDeleted = await folderManagement.DeleteDirectory(folder.CurrentFolder);
-            if (!directoryDeleted) return;
+            if (folder==null) return;
+            bool folderOnDiscDeleted = await folderManagement.DeleteFolderOnDisc(folder.CurrentFolder);
+            if (!folderOnDiscDeleted) return;
             DbFolder.DbFolders.Remove(folder);
             await DbFolder.SaveChangesAsync();
         }
-
         private async Task RefreshDb()
         {
             if (DbFolder.DbFolders.Any()) return;
-
             DbFolder.DbFolders.Add(await folderManagement.GetFolders());
             DbFolder.SaveChanges();
         }
         public async Task CreateFolder(Folder createFolder)
         {
             string path = createFolder.CurrentFolder;
-            if (!folderManagement.CreateDirectory(path)) return;
-            await CreateNewFolder(createFolder);
+            if (!folderManagement.CreateFolderOnDisc(path)) return;
+            await CreateFolderInDb(createFolder);
         }
-
-        private async Task CreateNewFolder(Folder createFolder)
+        private async Task CreateFolderInDb(Folder createFolder)
         {
             Folder parent = DbFolder.DbFolders.FirstOrDefault(target => target.Id==createFolder.ParentFolder.Id);
             parent.SubFolders.Add(createFolder);
             await DbFolder.SaveChangesAsync();
         }
-        public async Task<Folder> Search(int id)
+        public async Task<Folder> GetFolders(int? id)
         {
-            return await DbFolder.DbFolders.FindAsync(id);
+            await RefreshDb();
+            return await DbFolder.DbFolders.FindAsync(id) ?? DbFolder.DbFolders.First();
         }
     }
 }

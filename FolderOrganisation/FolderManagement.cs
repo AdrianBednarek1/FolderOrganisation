@@ -16,25 +16,25 @@ namespace FolderOrganisation
         }
         private void CreateStartingDirectory()
         {
-            if(!CreateDirectory(path)) return;
+            if(!CreateFolderOnDisc(path)) return;
             for (int i = 1; i < 4; i++)
             {
                 string map = Path.Combine(path, "Mapa" + i);
-                CreateDirectory(map);
+                CreateFolderOnDisc(map);
             }
         }
-        public bool CreateDirectory(string _path)
+        public bool CreateFolderOnDisc(string _path)
         {
             if (Directory.Exists(_path)) return false;
             Directory.CreateDirectory(_path);
             return true;
         }
-        public async Task<bool> DeleteDirectory(string path)
+        public async Task<bool> DeleteFolderOnDisc(string path)
         {
             if (!Directory.Exists(path)) return false;
             List<string> paths = new List<string>();
             paths.AddRange(Directory.GetDirectories(path).ToList());
-            foreach (var item in paths){await DeleteDirectory(item);}
+            foreach (var item in paths){await DeleteFolderOnDisc(item);}
             Directory.Delete(path);
             return true;
         }
