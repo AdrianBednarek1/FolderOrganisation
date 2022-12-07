@@ -1,5 +1,6 @@
 ﻿using FolderOrganisation.DataContext;
 using FolderOrganisation.ViewModels;
+using System;
 using System.Threading.Tasks;
 
 namespace FolderOrganisation.Repository
@@ -22,6 +23,11 @@ namespace FolderOrganisation.Repository
             Folder parent = await repositoryFolder.GetFolders(model.Parent);
             Folder folder = new Folder(model.FullDirectory, parent);
             await repositoryFolder.CreateFolder(folder);
+        }
+
+        public static async Task Edit(ModelViewFolder model)
+        {
+            await repositoryFolder.Edit(model.Id, model.FullDirectory);
         }
     }
 }

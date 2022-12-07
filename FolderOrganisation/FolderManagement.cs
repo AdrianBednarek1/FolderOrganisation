@@ -29,6 +29,12 @@ namespace FolderOrganisation
             Directory.CreateDirectory(_path);
             return true;
         }
+        public bool EditFolderOnDisc(string _path, string newPath)
+        {
+            if (Directory.Exists(newPath)) return false;
+            Directory.Move(_path,newPath);
+            return true;
+        }
         public async Task<bool> DeleteFolderOnDisc(string path)
         {
             if (!Directory.Exists(path)) return false;

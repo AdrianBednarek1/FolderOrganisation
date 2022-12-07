@@ -25,5 +25,11 @@ namespace FolderOrganisation.Controllers
             await ServiceFolder.Delete(deleteFolderId);
             return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
         }
+        public async Task<ActionResult> Edit(ModelViewFolder model, int? currentFolderId)
+        {
+            if (!ModelState.IsValid) return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
+            await ServiceFolder.Edit(model);
+            return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
+        }
     }
 }

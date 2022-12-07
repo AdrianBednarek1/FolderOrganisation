@@ -35,6 +35,14 @@ namespace FolderOrganisation.Repository
             DbFolder.DbFolders.Add(await folderManagement.GetFolders());
             DbFolder.SaveChanges();
         }
+
+        public async Task Edit(int id, string newPath)
+        {
+            string path = DbFolder.DbFolders.SingleOrDefault(m=>m.Id==id).CurrentFolder;
+            if (!folderManagement.EditFolderOnDisc(path,newPath)) return;
+            await EditFolderInDb(id, newPath);
+        }
+
         public async Task CreateFolder(Folder createFolder)
         {
             string path = createFolder.CurrentFolder;
@@ -45,6 +53,13 @@ namespace FolderOrganisation.Repository
         {
             Folder parent = DbFolder.DbFolders.FirstOrDefault(target => target.Id==createFolder.ParentFolder.Id);
             parent.SubFolders.Add(createFolder);
+            await DbFolder.SaveChangesAsync();
+        }
+        private async Task EditFolderInDb(int id, string newPath)
+        {
+            Folder folder = await DbFolder.DbFolders.FindAsync(id);
+            DbFolder.DbFolders.Attach(folder);
+            folder.CurrentFolder = newPath;
             await DbFolder.SaveChangesAsync();
         }
         public async Task<Folder> GetFolders(int? id)
