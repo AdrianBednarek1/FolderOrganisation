@@ -1,5 +1,4 @@
 ﻿using FolderOrganisation.DataContext;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -17,6 +16,11 @@ namespace FolderOrganisation.ViewModels
         public int? Parent { get; set; }
         public int SubFoldersCount { get { return SubFolders.Count(); } }
         public List<ModelViewFolder> SubFolders { get; set; }
+        public IQueryable<ModelViewFolder> sortedSubFolders {
+            get
+            {
+                return SubFolders.AsQueryable().OrderBy(m=>m.Name) ?? null;
+            }}
         public ModelViewFolder()
         {
             Name = null;

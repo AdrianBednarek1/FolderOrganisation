@@ -1,7 +1,5 @@
-﻿using FolderOrganisation.DataContext;
-using FolderOrganisation.Repository;
+﻿using FolderOrganisation.Repository;
 using FolderOrganisation.ViewModels;
-using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 

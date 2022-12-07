@@ -1,6 +1,4 @@
 ﻿using FolderOrganisation.DataContext;
-using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -58,7 +56,6 @@ namespace FolderOrganisation.Repository
         private async Task EditFolderInDb(int id, string newPath)
         {
             Folder folder = await DbFolder.DbFolders.FindAsync(id);
-            DbFolder.DbFolders.Attach(folder);
             folder.CurrentFolder = newPath;
             await DbFolder.SaveChangesAsync();
         }

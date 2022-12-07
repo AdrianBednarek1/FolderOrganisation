@@ -1,6 +1,5 @@
 ﻿using FolderOrganisation.DataContext;
 using FolderOrganisation.ViewModels;
-using System;
 using System.Threading.Tasks;
 
 namespace FolderOrganisation.Repository
@@ -11,7 +10,8 @@ namespace FolderOrganisation.Repository
         public static async Task<ModelViewFolder> GetFolders(int? id)
         {
             Folder folder = await repositoryFolder.GetFolders(id);
-            return new ModelViewFolder(folder, folder.ParentFolder?.Id ?? 0);
+            ModelViewFolder model = new ModelViewFolder(folder, folder.ParentFolder?.Id ?? 0);
+            return model;
         }
         public static async Task Delete(int id)
         {
