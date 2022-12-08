@@ -7,9 +7,12 @@
 <table class="table">
     <tr>
         <th>
-            @Model.FullDirectory | <button id="create" onclick="hideOrShow(@Model.Id), renameBtn(id,'Create')">Create folder</button>
+            @Model.FullDirectory |
+            <button id="create" onclick="hideOrShow(@Model.Id), renameBtn(id,'Create')">Create folder</button> |
             @if (Model.Parent != null)
             {@Html.ActionLink("Back", "FolderList", new { currentFolderId = Model.Parent }, new { @class = "btn btn-info" })}
+            @Html.ActionLink("CMD structure", "CMD", new { currentFolderId = Model.Parent }, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Change Root Directory", "ChangeRootDirectory", null, new { @class = "btn btn-primary" })
         </th>
     </tr>
     <tr>
@@ -17,9 +20,9 @@
             @using (Html.BeginForm("Create", "Folder", FormMethod.Post, new { id = Model.Id, @hidden = true }))
             {
                 @Html.TextBoxFor(m => m.Name, new { Value = "" })
-                @Html.HiddenFor(m => m.Parent, new { Value = Model.Id });
-                @Html.HiddenFor(m => m.Directory, new { Value = Model.FullDirectory });
-                @Html.Hidden("currentFolderId", Model.Id);
+                @Html.HiddenFor(m => m.Parent, new { Value = Model.Id })
+                @Html.HiddenFor(m => m.Directory, new { Value = Model.FullDirectory })
+                @Html.Hidden("currentFolderId", Model.Id)
                 <input type="submit" />
             }
         </th>

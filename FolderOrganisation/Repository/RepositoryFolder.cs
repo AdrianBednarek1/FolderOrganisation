@@ -18,7 +18,7 @@ namespace FolderOrganisation.Repository
             folderManagement = new FolderManagement();
             RestartDb(defaultPath);
         }
-        private void RestartDb(string _path)
+        public void RestartDb(string _path)
         {
             DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
             DbFolder.DbFolders.Add(new Folder(_path));
@@ -26,7 +26,10 @@ namespace FolderOrganisation.Repository
         }
         public async Task<List<string>> GetDrivesNames()
         {
-            return await folderManagement.GetDrives();
+            List<string> drives = new List<string>();
+            drives.AddRange(await folderManagement.GetDrives());
+            drives.Add(defaultPath);
+            return drives;
         }
         public async Task Delete(Folder folder)
         {

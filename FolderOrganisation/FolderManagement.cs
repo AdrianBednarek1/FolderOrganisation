@@ -58,9 +58,7 @@ namespace FolderOrganisation
         {
             DirectoryInfo mainDirectory = new DirectoryInfo(folder.CurrentFolder);
             DirectoryInfo[] allDirectories = mainDirectory.GetDirectories().Where(f => (f.Attributes & FileAttributes.Hidden) == 0).ToArray();
-
             await GetSubFoldersPerLevel(folder, allDirectories, level);
-
             return folder.SubFolders;
         }
         public async Task<List<Folder>> GetSubFoldersPerLevel(Folder folder, DirectoryInfo[] directories, int? subFolderLevel)
@@ -72,7 +70,7 @@ namespace FolderOrganisation
                 {
                     if (item.FullName.Contains("System Volume Information")) continue;
                     folder.SubFolders.Add(new Folder(item.FullName, folder));
-                    await GetSubFoldersPerLevel(folder.SubFolders.Last(), item.GetDirectories(),subFolderLevel--);
+                    await GetSubFoldersPerLevel(folder.SubFolders.Last(), item.GetDirectories(),--subFolderLevel);
                 }
                 catch (Exception)
                 {
