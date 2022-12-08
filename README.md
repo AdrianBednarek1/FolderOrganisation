@@ -4,7 +4,7 @@ Korišten je Visual Studio 2022, zajedno sa Microsoft SQL management studio i lo
 
 Nakon preuzimanja projekta potrebno je napraviti sljedeće:
 
-1. U Package Manager NuGet upisati: "Update-Package Microsoft.CodeDom.Providers.DotNetCompilerPlatform -r",
+1.U Package Manager NuGet upisati: "Update-Package Microsoft.CodeDom.Providers.DotNetCompilerPlatform -r",
 za ažuriranje kompajlera.
 
 2.Obrisati App_Data s desne strane i ponovno kreirati folder s istim nazivom.
