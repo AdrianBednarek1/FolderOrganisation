@@ -1,4 +1,7 @@
 ﻿using FolderOrganisation.DataContext;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -6,17 +9,19 @@ namespace FolderOrganisation.Repository
 {
     public class RepositoryFolder
     {
+        private string path = @"G:\";
         private DatabaseFolder DbFolder;
         private FolderManagement folderManagement;
         public RepositoryFolder()
         {
             DbFolder = new DatabaseFolder();
             folderManagement = new FolderManagement();
-            RemoveCurrentDb();
+            RestartDb();
         }
-        private void RemoveCurrentDb()
+        private void RestartDb()
         {
             DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
+            DbFolder.DbFolders.Add(new Folder(path));
             DbFolder.SaveChanges();
         }
         public async Task Delete(Folder folder)
@@ -33,14 +38,21 @@ namespace FolderOrganisation.Repository
             DbFolder.DbFolders.Add(await folderManagement.GetFolders());
             DbFolder.SaveChanges();
         }
-
+        private async Task GetFoldersFromDisc(Folder folder)
+        {
+            if(!folder.SubFolders.Any()) await folderManagement.GetSubFolders(folder, 2);
+            foreach (Folder subfolder in folder.SubFolders)
+            {
+                if (!subfolder.SubFolders.Any()) await folderManagement.GetSubFolders(subfolder,1);
+            }
+            await DbFolder.SaveChangesAsync();
+        }
         public async Task Edit(int id, string newPath)
         {
             string path = DbFolder.DbFolders.SingleOrDefault(m=>m.Id==id).CurrentFolder;
             if (!folderManagement.EditFolderOnDisc(path,newPath)) return;
             await EditFolderInDb(id, newPath);
         }
-
         public async Task CreateFolder(Folder createFolder)
         {
             string path = createFolder.CurrentFolder;
@@ -57,12 +69,14 @@ namespace FolderOrganisation.Repository
         {
             Folder folder = await DbFolder.DbFolders.FindAsync(id);
             folder.CurrentFolder = newPath;
+            foreach (var item in folder.SubFolders) { item.CurrentFolder = Path.Combine(folder.CurrentFolder,Path.GetFileName(item.CurrentFolder)); }
             await DbFolder.SaveChangesAsync();
         }
         public async Task<Folder> GetFolders(int? id)
         {
-            await RefreshDb();
-            return await DbFolder.DbFolders.FindAsync(id) ?? DbFolder.DbFolders.First();
+            Folder folder = await DbFolder.DbFolders.FindAsync(id) ?? DbFolder.DbFolders.First();
+            await GetFoldersFromDisc(folder);
+            return folder;
         }
     }
 }

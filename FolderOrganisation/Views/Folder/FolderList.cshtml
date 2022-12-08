@@ -6,9 +6,9 @@
 
 <table class="table">
     <tr>
-        <th>           
+        <th>
             @Model.FullDirectory | <button id="create" onclick="hideOrShow(@Model.Id), renameBtn(id,'Create')">Create folder</button>
-            @if (Model.Parent != 0)
+            @if (Model.Parent != null)
             {@Html.ActionLink("Back", "FolderList", new { currentFolderId = Model.Parent }, new { @class = "btn btn-info" })}
         </th>
     </tr>
@@ -28,7 +28,7 @@
     {
         <tr>
             <td>
-                @Html.ActionLink(item.Name, "FolderList", new { currentFolderId = item.Id })
+                @Html.ActionLink(item.Name, "FolderList", new { currentFolderId = item.Id }) 
             </td>
             <td>
                 @using (Html.BeginForm("Edit", "Folder", FormMethod.Post, new { id = item.Id, @hidden = true }))
@@ -41,13 +41,13 @@
                     <input type="submit" />
                 }
             </td>
-            <td>            
-                <button id="Edit + @item.Id" class = "btn btn-info" onclick="hideOrShow(@item.Id), renameBtn(id,'Edit')">Edit</button>
+            <td>
+                <button id="Edit + @item.Id" class="btn btn-info" onclick="hideOrShow(@item.Id), renameBtn(id,'Edit')">Edit</button>
                 @Html.ActionLink(
                 "Delete",
                 "Delete",
                 new { deleteFolderId = item.Id, currentFolderId = item.Parent },
-                new { onclick = item.SubFoldersCount > 0 ? "return confirm('This folder contains subfolders. Delete anyway?');" : null , @class = "btn btn-info" })
+                new { onclick = item.SubFoldersCount > 0 ? "return confirm('This folder contains subfolders. Delete anyway?');" : null, @class = "btn btn-info" })
             </td>
         </tr>
     }
@@ -56,7 +56,7 @@
     function hideOrShow(x) {
         document.getElementById(x).hidden = !document.getElementById(x).hidden;
     }
-    function renameBtn(x,y) {
+    function renameBtn(x, y) {
         if (document.getElementById(x).innerText == "Cancel") {
             document.getElementById(x).innerText = y;
         }

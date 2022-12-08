@@ -14,7 +14,6 @@ namespace FolderOrganisation.Controllers
         }
         public async Task<ActionResult> Create(ModelViewFolder model, int? currentFolderId)
         {   
-            if (!ModelState.IsValid) return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
             await ServiceFolder.Create(model);
             return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
         }
@@ -25,7 +24,6 @@ namespace FolderOrganisation.Controllers
         }
         public async Task<ActionResult> Edit(ModelViewFolder model, int? currentFolderId)
         {
-            if (!ModelState.IsValid) return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
             await ServiceFolder.Edit(model);
             return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
         }

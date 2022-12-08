@@ -197,7 +197,6 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Folder\List.cshtml" />
     <Content Include="Views\Folder\FolderList.cshtml" />
   </ItemGroup>
   <ItemGroup>

@@ -10,7 +10,7 @@ namespace FolderOrganisation.Repository
         public static async Task<ModelViewFolder> GetFolders(int? id)
         {
             Folder folder = await repositoryFolder.GetFolders(id);
-            ModelViewFolder model = new ModelViewFolder(folder, folder.ParentFolder?.Id ?? 0);
+            ModelViewFolder model = new ModelViewFolder(folder, folder.ParentFolder?.Id);
             return model;
         }
         public static async Task Delete(int id)

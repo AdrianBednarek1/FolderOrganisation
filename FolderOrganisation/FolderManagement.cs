@@ -9,10 +9,10 @@ namespace FolderOrganisation
 {
     public class FolderManagement
     {
-        private string path = @"C:\FolderOrganisation";
+        private string path = @"E:\FolderOrganisation";
         public FolderManagement()
         {
-            CreateStartingDirectory();
+            //CreateStartingDirectory();
         }
         private void CreateStartingDirectory()
         {
@@ -47,28 +47,39 @@ namespace FolderOrganisation
         public async Task<Folder> GetFolders()
         {
             DirectoryInfo mainDirectory = new DirectoryInfo(path);
-            DirectoryInfo[] allDirectories = mainDirectory.GetDirectories();
+            DirectoryInfo[] allDirectories = mainDirectory.GetDirectories().Where(f => (f.Attributes & FileAttributes.Hidden) == 0).ToArray();
 
             Folder folder = new Folder(path);
-            folder = await GetAllFolders(folder, allDirectories);
+            folder.SubFolders.AddRange(await GetSubFoldersPerLevel(folder, allDirectories,null));
 
             return folder;
         }
-        private async Task<Folder> GetAllFolders(Folder folder, DirectoryInfo[] directories)
+        public async Task<List<Folder>> GetSubFolders(Folder folder,int? level)
         {
+            DirectoryInfo mainDirectory = new DirectoryInfo(folder.CurrentFolder);
+            DirectoryInfo[] allDirectories = mainDirectory.GetDirectories();
+
+            await GetSubFoldersPerLevel(folder, allDirectories, level);
+
+            return folder.SubFolders;
+        }
+        public async Task<List<Folder>> GetSubFoldersPerLevel(Folder folder, DirectoryInfo[] directories, int? subFolderLevel)
+        {
+            if (subFolderLevel == 0) return null;
             foreach (var item in directories)
             {
                 try
                 {
+                    if (item.FullName.Contains("System Volume Information")) continue;
                     folder.SubFolders.Add(new Folder(item.FullName, folder));
-                    await GetAllFolders(folder.SubFolders.Last(), item.GetDirectories());
+                    await GetSubFoldersPerLevel(folder.SubFolders.Last(), item.GetDirectories(),subFolderLevel--);
                 }
                 catch (Exception)
                 {
                     continue;
                 }
             }
-            return folder;
+            return folder.SubFolders;
         }
     }
 }
