@@ -64,13 +64,14 @@ namespace FolderOrganisation
         public async Task<List<Folder>> GetSubFoldersPerLevel(Folder folder, DirectoryInfo[] directories, int? subFolderLevel)
         {
             if (subFolderLevel == 0) return null;
+            subFolderLevel--;
             foreach (var item in directories)
             {
                 try
                 {
                     if (item.FullName.Contains("System Volume Information")) continue;
                     folder.SubFolders.Add(new Folder(item.FullName, folder));
-                    await GetSubFoldersPerLevel(folder.SubFolders.Last(), item.GetDirectories(),--subFolderLevel);
+                    await GetSubFoldersPerLevel(folder.SubFolders.Last(), item.GetDirectories(), subFolderLevel);
                 }
                 catch (Exception)
                 {
