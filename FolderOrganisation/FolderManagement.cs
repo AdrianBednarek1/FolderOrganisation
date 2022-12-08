@@ -9,8 +9,20 @@ namespace FolderOrganisation
 {
     public class FolderManagement
     {
-        private string path = @"E:\FolderOrganisation";
-       
+        private string path = @"C:\FolderOrganisation";
+        public FolderManagement()
+        {
+            CreateStartingDirectory();
+        }
+        private void CreateStartingDirectory()
+        {
+            if (!CreateFolderOnDisc(path)) return;
+            for (int i = 1; i < 4; i++)
+            {
+                string folder = Path.Combine(path, "Mapa" + i);
+                CreateFolderOnDisc(folder);
+            }
+        }
         public bool CreateFolderOnDisc(string _path)
         {
             if (Directory.Exists(_path)) return false;
@@ -22,6 +34,16 @@ namespace FolderOrganisation
             if (Directory.Exists(newPath)) return false;
             Directory.Move(_path,newPath);
             return true;
+        }
+        public async Task<List<string>> GetDrives()
+        {
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            List<string> drivesNames = new List<string>();
+            foreach (var item in drives)
+            {
+                drivesNames.Add(item.Name);
+            }
+            return drivesNames;
         }
         public async Task<bool> DeleteFolderOnDisc(string path)
         {

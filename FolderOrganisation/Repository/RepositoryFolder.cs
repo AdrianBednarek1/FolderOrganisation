@@ -9,20 +9,24 @@ namespace FolderOrganisation.Repository
 {
     public class RepositoryFolder
     {
-        private string path = @"C:\";
+        private string defaultPath = @"C:\FolderOrganisation";
         private DatabaseFolder DbFolder;
         private FolderManagement folderManagement;
         public RepositoryFolder()
         {
             DbFolder = new DatabaseFolder();
             folderManagement = new FolderManagement();
-            RestartDb();
+            RestartDb(defaultPath);
         }
-        private void RestartDb()
+        private void RestartDb(string _path)
         {
             DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
-            DbFolder.DbFolders.Add(new Folder(path));
+            DbFolder.DbFolders.Add(new Folder(_path));
             DbFolder.SaveChanges();
+        }
+        public async Task<List<string>> GetDrivesNames()
+        {
+            return await folderManagement.GetDrives();
         }
         public async Task Delete(Folder folder)
         {
