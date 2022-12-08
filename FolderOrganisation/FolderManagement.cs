@@ -10,19 +10,7 @@ namespace FolderOrganisation
     public class FolderManagement
     {
         private string path = @"E:\FolderOrganisation";
-        public FolderManagement()
-        {
-            //CreateStartingDirectory();
-        }
-        private void CreateStartingDirectory()
-        {
-            if(!CreateFolderOnDisc(path)) return;
-            for (int i = 1; i < 4; i++)
-            {
-                string map = Path.Combine(path, "Mapa" + i);
-                CreateFolderOnDisc(map);
-            }
-        }
+       
         public bool CreateFolderOnDisc(string _path)
         {
             if (Directory.Exists(_path)) return false;
@@ -44,20 +32,10 @@ namespace FolderOrganisation
             Directory.Delete(path);
             return true;
         }
-        public async Task<Folder> GetFolders()
-        {
-            DirectoryInfo mainDirectory = new DirectoryInfo(path);
-            DirectoryInfo[] allDirectories = mainDirectory.GetDirectories().Where(f => (f.Attributes & FileAttributes.Hidden) == 0).ToArray();
-
-            Folder folder = new Folder(path);
-            folder.SubFolders.AddRange(await GetSubFoldersPerLevel(folder, allDirectories,null));
-
-            return folder;
-        }
         public async Task<List<Folder>> GetSubFolders(Folder folder,int? level)
         {
             DirectoryInfo mainDirectory = new DirectoryInfo(folder.CurrentFolder);
-            DirectoryInfo[] allDirectories = mainDirectory.GetDirectories();
+            DirectoryInfo[] allDirectories = mainDirectory.GetDirectories().Where(f => (f.Attributes & FileAttributes.Hidden) == 0).ToArray();
 
             await GetSubFoldersPerLevel(folder, allDirectories, level);
 

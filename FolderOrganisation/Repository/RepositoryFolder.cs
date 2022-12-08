@@ -9,7 +9,7 @@ namespace FolderOrganisation.Repository
 {
     public class RepositoryFolder
     {
-        private string path = @"G:\";
+        private string path = @"C:\";
         private DatabaseFolder DbFolder;
         private FolderManagement folderManagement;
         public RepositoryFolder()
@@ -31,12 +31,6 @@ namespace FolderOrganisation.Repository
             if (!folderOnDiscDeleted) return;
             DbFolder.DbFolders.Remove(folder);
             await DbFolder.SaveChangesAsync();
-        }
-        private async Task RefreshDb()
-        {
-            if (DbFolder.DbFolders.Any()) return;
-            DbFolder.DbFolders.Add(await folderManagement.GetFolders());
-            DbFolder.SaveChanges();
         }
         private async Task GetFoldersFromDisc(Folder folder)
         {
