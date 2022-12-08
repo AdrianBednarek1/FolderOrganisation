@@ -8,7 +8,7 @@
     <tr>
         <th>
             @Model.FullDirectory |
-            <button id="create" onclick="hideOrShow(@Model.Id), renameBtn(id,'Create')">Create folder</button> |
+            <button id="create" onclick="hideOrShow(@Model.Id), renameBtn(id,'Create')">Create folder</button> 
             @if (Model.Parent != null)
             {@Html.ActionLink("Back", "FolderList", new { currentFolderId = Model.Parent }, new { @class = "btn btn-info" })}
             @Html.ActionLink("CMD structure", "CMD", new { currentFolderId = Model.Parent }, new { @class = "btn btn-primary" })
