@@ -7,7 +7,7 @@ Nakon preuzimanja projekta potrebno je napraviti sljedeće:
 1.U Package Manager NuGet upisati: "Update-Package Microsoft.CodeDom.Providers.DotNetCompilerPlatform -r",
 za ažuriranje kompajlera.
 
-*Alternativno se može desni klik na solution, kliknuti na "Clean" za isti rezultat.
+*Alternativno se može desni klik na solution, kliknuti na "Clean" zajedno sa "Build" za isti rezultat.
 
 --Sa navedenim postupcima, aplikacija bi trebala ispravno raditi.
 
