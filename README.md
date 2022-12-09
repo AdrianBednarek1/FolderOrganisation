@@ -5,19 +5,11 @@ Korišten je Visual Studio 2022 MVC5, zajedno sa Microsoft SQL management studio
 Nakon preuzimanja projekta potrebno je napraviti sljedeće:
 
 1.U Package Manager NuGet upisati: "Update-Package Microsoft.CodeDom.Providers.DotNetCompilerPlatform -r",
-za ažuriranje kompajlera. Alternativno se može desni klik na solution, kliknuti na "Clean" za isti rezultat.
+za ažuriranje kompajlera.
 
-2.Obrisati App_Data s desne strane i ponovno kreirati folder s istim nazivom.
+*Alternativno se može desni klik na solution, kliknuti na "Clean" za isti rezultat.
 
-3.Obrisati Migration folder, zatim pokrenuti sljedeće naredbe:
-    
-    enable-migrations
-    
-    add-migration nameMigration
-    
-    update-database
-
-Sa navedenim postupcima, aplikacija bi trebala ispravno raditi.
+--Sa navedenim postupcima, aplikacija bi trebala ispravno raditi.
 
 Funkcionalnosti:
 
