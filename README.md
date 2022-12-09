@@ -1,6 +1,6 @@
 FolderOrganisation
 
-Korišten je Visual Studio 2022, zajedno sa Microsoft SQL management studio i lokalnim serverom "LocalDb\MSSQLLocalDB"
+Korišten je Visual Studio 2022 MVC5, zajedno sa Microsoft SQL management studio i lokalnim serverom "LocalDb\MSSQLLocalDB"
 
 Nakon preuzimanja projekta potrebno je napraviti sljedeće:
 
