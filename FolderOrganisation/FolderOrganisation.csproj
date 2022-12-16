@@ -132,7 +132,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DataContext\DatabaseFolder.cs" />
     <Compile Include="DataContext\Folder.cs" />
-    <Compile Include="FolderManagement.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

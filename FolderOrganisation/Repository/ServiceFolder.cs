@@ -32,23 +32,9 @@ namespace FolderOrganisation.Repository
         {
             await repositoryFolder.Edit(model.Id, model.FullDirectory);
         }
-        public static async Task CMDtreeFolder()
+        public static async Task RestartDb()
         {
-            await cmdFolderStructure.RunCMDtreeCommand();
-        }
-        public static async Task<List<SelectListItem>> GetDrives()
-        {
-            List<string> listString = await repositoryFolder.GetDrivesNames(); 
-            List<SelectListItem> dropDown = listString.ConvertAll(m=> new SelectListItem() { Text = m, Value = m});
-            return dropDown;
-        }
-        public static async Task<List<string>> GetDrivesString()
-        {
-            return await repositoryFolder.GetDrivesNames();
-        }
-        public static void ChangeRootDirectory(string path)
-        {
-            repositoryFolder.RestartDb(path);
+            await repositoryFolder.RestartDb();
         }
     }
 }

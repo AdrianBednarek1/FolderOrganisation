@@ -1,6 +1,7 @@
 ﻿using FolderOrganisation.DataContext;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,55 +10,45 @@ namespace FolderOrganisation.Repository
 {
     public class RepositoryFolder
     {
-        private string defaultPath = @"C:\FolderOrganisation";
+        private string defaultPath = @"C:\";
         private DatabaseFolder DbFolder;
-        private FolderManagement folderManagement;
         public RepositoryFolder()
         {
-            DbFolder = new DatabaseFolder();
-            folderManagement = new FolderManagement();
-            RestartDb(defaultPath);
+            DbFolder = new DatabaseFolder();          
         }
-        public void RestartDb(string _path)
+        public async Task RestartDb()
         {
             DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
-            DbFolder.DbFolders.Add(new Folder(_path));
-            DbFolder.SaveChanges();
+            await DbFolder.SaveChangesAsync(); 
+            await CreateStartingDirectory();
         }
-        public async Task<List<string>> GetDrivesNames()
+
+        private async Task CreateStartingDirectory()
         {
-            List<string> drives = new List<string>();
-            drives.AddRange(await folderManagement.GetDrives());
-            drives.Add(defaultPath);
-            return drives;
+            Folder parent = new Folder(defaultPath);
+            for (int i = 0; i < 6; i++)
+            {
+                parent.SubFolders.Add(new Folder(Path.Combine(defaultPath,"mapa"+i),parent));
+            }
+            DbFolder.DbFolders.Add(parent);
+            await DbFolder.SaveChangesAsync();
         }
         public async Task Delete(Folder folder)
         {
-            if (folder==null) return;
-            bool folderOnDiscDeleted = await folderManagement.DeleteFolderOnDisc(folder.CurrentFolder);
-            if (!folderOnDiscDeleted) return;
+            if (await DbFolder.DbFolders.FindAsync(folder?.Id)==null) return;
             DbFolder.DbFolders.Remove(folder);
-            await DbFolder.SaveChangesAsync();
-        }
-        private async Task GetFoldersFromDisc(Folder folder)
-        {
-            if(!folder.SubFolders.Any()) await folderManagement.GetSubFolders(folder, 2);
-            foreach (Folder subfolder in folder.SubFolders)
-            {
-                if (!subfolder.SubFolders.Any()) await folderManagement.GetSubFolders(subfolder,1);
-            }
             await DbFolder.SaveChangesAsync();
         }
         public async Task Edit(int id, string newPath)
         {
             string path = DbFolder.DbFolders.SingleOrDefault(m=>m.Id==id).CurrentFolder;
-            if (!folderManagement.EditFolderOnDisc(path,newPath)) return;
+            if (await DbFolder.DbFolders.FirstOrDefaultAsync(d=>d.CurrentFolder.Equals(newPath))!=null) return;
             await EditFolderInDb(id, newPath);
         }
         public async Task CreateFolder(Folder createFolder)
         {
             string path = createFolder.CurrentFolder;
-            if (!folderManagement.CreateFolderOnDisc(path)) return;
+            if (await DbFolder.DbFolders.FirstOrDefaultAsync(d=>d.CurrentFolder.Equals(path))!=null) return;
             await CreateFolderInDb(createFolder);
         }
         private async Task CreateFolderInDb(Folder createFolder)
@@ -74,9 +65,9 @@ namespace FolderOrganisation.Repository
             await DbFolder.SaveChangesAsync();
         }
         public async Task<Folder> GetFolders(int? id)
-        {
+        {   
+            if(!DbFolder.DbFolders.Any()) await CreateStartingDirectory();
             Folder folder = await DbFolder.DbFolders.FindAsync(id) ?? DbFolder.DbFolders.First();
-            await GetFoldersFromDisc(folder);
             return folder;
         }
     }

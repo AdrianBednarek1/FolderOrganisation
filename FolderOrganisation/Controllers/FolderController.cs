@@ -12,7 +12,7 @@ namespace FolderOrganisation.Controllers
             ModelViewFolder modelFolder = await ServiceFolder.GetFolders(currentFolderId);
             return View(modelFolder);
         }
-        public async Task<ActionResult> Create(ModelViewFolder model, int? currentFolderId)
+        public async Task<ActionResult> Create(ModelViewFolder model, int? currentFolderId) 
         {   
             await ServiceFolder.Create(model);
             return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
@@ -27,20 +27,9 @@ namespace FolderOrganisation.Controllers
             await ServiceFolder.Edit(model);
             return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
         }
-        public async Task<ActionResult> Cmd(int? currentFolderId)
+        public async Task<ActionResult> Restart()
         {
-            await ServiceFolder.CMDtreeFolder();
-            return RedirectToAction("FolderList", "Folder", new { currentFolderId = currentFolderId });
-        }
-        public async Task<ActionResult> ChangeRootDirectory()
-        {
-            ViewBag.dropDsownList = await ServiceFolder.GetDrives();
-            return View();
-        }
-        [HttpPost]
-        public async Task<ActionResult> ChangeRootDirectory(string selectedRootDirectory)
-        {
-            ServiceFolder.ChangeRootDirectory(selectedRootDirectory);
+            await ServiceFolder.RestartDb();
             return RedirectToAction("FolderList", "Folder");
         }
     }
