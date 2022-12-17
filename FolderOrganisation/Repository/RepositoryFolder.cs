@@ -18,20 +18,22 @@ namespace FolderOrganisation.Repository
         public async Task RestartDb()
         {
             DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
-            await DbFolder.SaveChangesAsync(); 
-            await CreateStartingDirectory();
-        }
-        private async Task CreateStartingDirectory()
-        {
-            Folder parent = new Folder(defaultPath);
-            for (int i = 0; i < 6; i++)
-            {
-                Folder newFolder = new Folder(Path.Combine(defaultPath, "mapa" + i), parent);
-                newFolder.SubFolders.Add(new Folder(Path.Combine(newFolder.CurrentFolder, "subFolder"), newFolder));
-                parent.SubFolders.Add(newFolder);
-            }
+            await DbFolder.SaveChangesAsync();
+            Folder parent = CreateStartingDirectory(new Folder(defaultPath),2);
             DbFolder.DbFolders.Add(parent);
             await DbFolder.SaveChangesAsync();
+        }
+        private Folder CreateStartingDirectory(Folder parent,int subFolderLevel)
+        {
+            if (subFolderLevel < 0) return null;
+            subFolderLevel--;
+            for (int i = 0; i < 4; i++)
+            {
+                Folder newFolder = new Folder(Path.Combine(defaultPath, "mapa" + i), parent);
+                CreateStartingDirectory(newFolder, subFolderLevel);
+                parent.SubFolders.Add(newFolder);
+            }
+            return parent;
         }
         public async Task Delete(Folder folder)
         {
@@ -75,7 +77,7 @@ namespace FolderOrganisation.Repository
         }
         public async Task<Folder> GetFolders(int? id)
         {   
-            if(!DbFolder.DbFolders.Any()) await CreateStartingDirectory();
+            if(!DbFolder.DbFolders.Any()) await RestartDb();
             Folder FolderFromDb = 
                 await DbFolder.DbFolders.Include(m=>m.SubFolders).SingleOrDefaultAsync(m=>m.Id==id) 
                 ?? DbFolder.DbFolders.Include(m=>m.SubFolders).FirstOrDefault();
