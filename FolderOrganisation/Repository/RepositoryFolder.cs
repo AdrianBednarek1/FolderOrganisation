@@ -47,7 +47,7 @@ namespace FolderOrganisation.Repository
             foreach (var item in subFolders.ToList())
             {
                 if (item.SubFolders.Any()) await DeleteSubFolders(item.SubFolders);             
-                DbFolder.DbFolders.Remove(await GetFolders(item.Id));
+                DbFolder.DbFolders.Remove(item);
             }
         }
         public async Task Edit(int id, string newPath)
