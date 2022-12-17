@@ -14,8 +14,6 @@ namespace FolderOrganisation.Repository
         public RepositoryFolder()
         {
             DbFolder = new DatabaseFolder();
-            DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
-            DbFolder.SaveChanges();
         }
         public async Task RestartDb()
         {
@@ -47,7 +45,7 @@ namespace FolderOrganisation.Repository
             foreach (var item in subFolders.ToList())
             {
                 if (item.SubFolders.Any()) await DeleteSubFolders(item.SubFolders);             
-                DbFolder.DbFolders.Remove(item);
+                DbFolder.DbFolders.Remove(await GetFolders(item.Id));
             }
         }
         public async Task Edit(int id, string newPath)
@@ -78,7 +76,9 @@ namespace FolderOrganisation.Repository
         public async Task<Folder> GetFolders(int? id)
         {   
             if(!DbFolder.DbFolders.Any()) await CreateStartingDirectory();
-            Folder FolderFromDb = await DbFolder.DbFolders.FindAsync(id) ?? DbFolder.DbFolders.Include(m=>m.SubFolders).FirstOrDefault();
+            Folder FolderFromDb = 
+                await DbFolder.DbFolders.Include(m=>m.SubFolders).SingleOrDefaultAsync(m=>m.Id==id) 
+                ?? DbFolder.DbFolders.Include(m=>m.SubFolders).FirstOrDefault();
             return FolderFromDb;
         }
     }
