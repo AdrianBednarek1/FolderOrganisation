@@ -78,12 +78,7 @@ namespace FolderOrganisation.Repository
         public async Task<Folder> GetFolders(int? id)
         {   
             if(!DbFolder.DbFolders.Any()) await CreateStartingDirectory();
-
-            Folder FolderFromDb = 
-                await DbFolder.DbFolders.Include(d=>d.SubFolders).SingleOrDefaultAsync(d=>d.Id==id) 
-                ?? 
-                DbFolder.DbFolders.Include(m=>m.SubFolders).FirstOrDefault();
-
+            Folder FolderFromDb = await DbFolder.DbFolders.FindAsync(id) ?? DbFolder.DbFolders.Include(m=>m.SubFolders).FirstOrDefault();
             return FolderFromDb;
         }
     }
