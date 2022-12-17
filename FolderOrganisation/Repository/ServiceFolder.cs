@@ -57,5 +57,9 @@ namespace FolderOrganisation.Repository
         {
             await repositoryFolder.RestartDb();
         }
+        public static async Task DeleteEverything()
+        {
+            await repositoryFolder.DeleteEverything();
+        }
     }
 }

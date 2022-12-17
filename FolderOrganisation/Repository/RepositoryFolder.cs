@@ -1,4 +1,5 @@
 ﻿using FolderOrganisation.DataContext;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
@@ -27,9 +28,9 @@ namespace FolderOrganisation.Repository
         {
             if (subFolderLevel < 0) return null;
             subFolderLevel--;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
-                Folder newFolder = new Folder(Path.Combine(defaultPath, "mapa" + i), parent);
+                Folder newFolder = new Folder(Path.Combine(parent.CurrentFolder, "mapa" + i), parent);
                 CreateStartingDirectory(newFolder, subFolderLevel);
                 parent.SubFolders.Add(newFolder);
             }
@@ -78,10 +79,17 @@ namespace FolderOrganisation.Repository
         public async Task<Folder> GetFolders(int? id)
         {   
             if(!DbFolder.DbFolders.Any()) await RestartDb();
-            Folder FolderFromDb = 
+            Folder searchOrRoot = 
                 await DbFolder.DbFolders.Include(m=>m.SubFolders).SingleOrDefaultAsync(m=>m.Id==id) 
                 ?? DbFolder.DbFolders.Include(m=>m.SubFolders).FirstOrDefault();
-            return FolderFromDb;
+            return searchOrRoot;
+        }
+        public async Task DeleteEverything()
+        {
+            DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
+            await DbFolder.SaveChangesAsync();
+            DbFolder.DbFolders.Add(new Folder(defaultPath));
+            await DbFolder.SaveChangesAsync();
         }
     }
 }

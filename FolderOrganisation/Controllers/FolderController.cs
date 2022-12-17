@@ -36,5 +36,10 @@ namespace FolderOrganisation.Controllers
         {
             return View(await ServiceFolder.GetStructure());
         }
+        public async Task<ActionResult> DeleteEverything()
+        {
+            await ServiceFolder.DeleteEverything();
+            return RedirectToAction("FolderList", "Folder");
+        }
     }
 }

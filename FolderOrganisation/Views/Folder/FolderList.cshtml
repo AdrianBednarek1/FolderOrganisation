@@ -12,6 +12,7 @@
             @if (Model.Parent != null)
             {@Html.ActionLink("Back", "FolderList", new { currentFolderId = Model.Parent }, new { @class = "btn btn-info" })}
             @Html.ActionLink("Restart Db", "Restart", null, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Delete database", "DeleteEverything", null, new { @class = "btn btn-primary" })
             @Html.ActionLink("See full structure", "FolderStructure", null, new { @class = "btn btn-primary" })
         </th>
     </tr>
