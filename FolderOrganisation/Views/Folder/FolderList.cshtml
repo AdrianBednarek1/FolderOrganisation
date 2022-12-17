@@ -8,10 +8,11 @@
     <tr>
         <th>
             @Model.FullDirectory |
-            <button id="create" onclick="hideOrShow(@Model.Id), renameBtn(id,'Create')">Create folder</button> 
+            <button id="create" onclick="hideOrShow(@Model.Id), renameBtn(id,'Create')">Create folder</button>
             @if (Model.Parent != null)
             {@Html.ActionLink("Back", "FolderList", new { currentFolderId = Model.Parent }, new { @class = "btn btn-info" })}
             @Html.ActionLink("Restart Db", "Restart", null, new { @class = "btn btn-primary" })
+            @Html.ActionLink("See full structure", "FolderStructure", null, new { @class = "btn btn-primary" })
         </th>
     </tr>
     <tr>

@@ -1,5 +1,4 @@
 ﻿using FolderOrganisation.DataContext;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
@@ -10,11 +9,13 @@ namespace FolderOrganisation.Repository
 {
     public class RepositoryFolder
     {
-        private string defaultPath = @"C:\";
+        private readonly string defaultPath = @"C:\";
         private DatabaseFolder DbFolder;
         public RepositoryFolder()
         {
-            DbFolder = new DatabaseFolder();          
+            DbFolder = new DatabaseFolder();
+            DbFolder.DbFolders.RemoveRange(DbFolder.DbFolders);
+            DbFolder.SaveChanges();
         }
         public async Task RestartDb()
         {
@@ -22,13 +23,14 @@ namespace FolderOrganisation.Repository
             await DbFolder.SaveChangesAsync(); 
             await CreateStartingDirectory();
         }
-
         private async Task CreateStartingDirectory()
         {
             Folder parent = new Folder(defaultPath);
             for (int i = 0; i < 6; i++)
             {
-                parent.SubFolders.Add(new Folder(Path.Combine(defaultPath,"mapa"+i),parent));
+                Folder newFolder = new Folder(Path.Combine(defaultPath, "mapa" + i), parent);
+                newFolder.SubFolders.Add(new Folder(Path.Combine(newFolder.CurrentFolder, "subFolder"), newFolder));
+                parent.SubFolders.Add(newFolder);
             }
             DbFolder.DbFolders.Add(parent);
             await DbFolder.SaveChangesAsync();
@@ -36,8 +38,17 @@ namespace FolderOrganisation.Repository
         public async Task Delete(Folder folder)
         {
             if (await DbFolder.DbFolders.FindAsync(folder?.Id)==null) return;
-            DbFolder.DbFolders.Remove(folder);
+            await DeleteSubFolders(folder.SubFolders);
+            DbFolder.DbFolders.Remove(folder);  
             await DbFolder.SaveChangesAsync();
+        }
+        public async Task DeleteSubFolders(List<Folder> subFolders)
+        {
+            foreach (var item in subFolders.ToList())
+            {
+                if (item.SubFolders.Any()) await DeleteSubFolders(item.SubFolders);             
+                DbFolder.DbFolders.Remove(await GetFolders(item.Id));
+            }
         }
         public async Task Edit(int id, string newPath)
         {
@@ -67,8 +78,13 @@ namespace FolderOrganisation.Repository
         public async Task<Folder> GetFolders(int? id)
         {   
             if(!DbFolder.DbFolders.Any()) await CreateStartingDirectory();
-            Folder folder = await DbFolder.DbFolders.FindAsync(id) ?? DbFolder.DbFolders.First();
-            return folder;
+
+            Folder FolderFromDb = 
+                await DbFolder.DbFolders.Include(d=>d.SubFolders).SingleOrDefaultAsync(d=>d.Id==id) 
+                ?? 
+                DbFolder.DbFolders.Include(m=>m.SubFolders).FirstOrDefault();
+
+            return FolderFromDb;
         }
     }
 }

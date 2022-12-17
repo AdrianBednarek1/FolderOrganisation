@@ -1,0 +1,28 @@
+﻿@model List<FolderOrganisation.ViewModels.ModelViewStructure>
+
+@{
+    ViewBag.Title = "FolderStructure";
+}
+
+<h2>FolderStructure</h2>
+
+<table class="table">
+    <tr>
+        <td>
+            @Html.ActionLink("Folder List", "FolderList", null, new { @class = "btn btn-primary" })
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Naziv
+        </td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+        </tr>
+    }
+</table>

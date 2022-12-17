@@ -8,6 +8,7 @@ namespace FolderOrganisation.DataContext
         public string CurrentFolder { get; set; }
         public List<Folder> SubFolders { get; set; }
         public Folder ParentFolder { get; set; }
+        public int? ParentFolderId { get; set; }
         public Folder()
         {
             SubFolders = new List<Folder>();

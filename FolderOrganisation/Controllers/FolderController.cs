@@ -32,5 +32,9 @@ namespace FolderOrganisation.Controllers
             await ServiceFolder.RestartDb();
             return RedirectToAction("FolderList", "Folder");
         }
+        public async Task<ActionResult> FolderStructure()
+        {
+            return View(await ServiceFolder.GetStructure());
+        }
     }
 }

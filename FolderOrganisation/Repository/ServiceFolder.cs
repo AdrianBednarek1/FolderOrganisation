@@ -1,6 +1,7 @@
 ﻿using FolderOrganisation.DataContext;
 using FolderOrganisation.ViewModels;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -9,7 +10,13 @@ namespace FolderOrganisation.Repository
     public static class ServiceFolder
     {
         private static RepositoryFolder repositoryFolder = new RepositoryFolder();
-        private static CMDfolderStructure cmdFolderStructure = new CMDfolderStructure();
+        public static async Task<List<ModelViewStructure>> GetStructure()
+        {
+            Folder folder = await repositoryFolder.GetFolders(null);
+            List<ModelViewStructure> structure= new List<ModelViewStructure>();
+            folder.SubFolders.ForEach(d=>structure.Add(new ModelViewStructure(Path.GetDirectoryName(d.CurrentFolder),1)));
+            return structure;
+        }
         public static async Task<ModelViewFolder> GetFolders(int? id)
         {
             Folder folder = await repositoryFolder.GetFolders(id);
