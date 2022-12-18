@@ -15,6 +15,8 @@ Funkcionalnosti:
 
 1.Kretanje po folderima, brisanje, editiranje i kreiranje
 
-2.Odabir root foldera prema padajućem popisu diskova
+2.Pregled structure svih foldera
 
-3.Ispis strukture foldera od C:\ diska preko CMD-a
+3.Brisanje cijele baze
+
+4.Restart cijele baze
