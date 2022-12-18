@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace FolderOrganisation.Repository
 {
@@ -53,14 +54,27 @@ namespace FolderOrganisation.Repository
         }
         public async Task Edit(int id, string newPath)
         {
-            string path = DbFolder.DbFolders.SingleOrDefault(m=>m.Id==id).CurrentFolder;
-            if (await DbFolder.DbFolders.FirstOrDefaultAsync(d=>d.CurrentFolder.Equals(newPath))!=null) return;
-            await EditFolderInDb(id, newPath);
+            bool newPathExists = await DbFolder.DbFolders.FirstOrDefaultAsync(d => d.CurrentFolder.Equals(newPath)) != null;
+            if (newPathExists) return;
+            Folder folder = await DbFolder.DbFolders.FindAsync(id);
+            folder.CurrentFolder = newPath;
+            UpdateSubFolders(folder);
+            await DbFolder.SaveChangesAsync();
+        }
+        private void UpdateSubFolders(Folder folder)
+        {
+            foreach (var item in folder.SubFolders)
+            {
+                string updatedPath = Path.Combine(folder.CurrentFolder, Path.GetFileName(item.CurrentFolder));
+                item.CurrentFolder = updatedPath;
+                if (item.SubFolders.Any()) UpdateSubFolders(item);
+            }
         }
         public async Task CreateFolder(Folder createFolder)
         {
             string path = createFolder.CurrentFolder;
-            if (await DbFolder.DbFolders.FirstOrDefaultAsync(d=>d.CurrentFolder.Equals(path))!=null) return;
+            bool pathAlreadyExists = await DbFolder.DbFolders.FirstOrDefaultAsync(d => d.CurrentFolder.Equals(path)) != null;
+            if (pathAlreadyExists) return;
             await CreateFolderInDb(createFolder);
         }
         private async Task CreateFolderInDb(Folder createFolder)
@@ -69,19 +83,12 @@ namespace FolderOrganisation.Repository
             parent.SubFolders.Add(createFolder);
             await DbFolder.SaveChangesAsync();
         }
-        private async Task EditFolderInDb(int id, string newPath)
-        {
-            Folder folder = await DbFolder.DbFolders.FindAsync(id);
-            folder.CurrentFolder = newPath;
-            foreach (var item in folder.SubFolders) { item.CurrentFolder = Path.Combine(folder.CurrentFolder,Path.GetFileName(item.CurrentFolder)); }
-            await DbFolder.SaveChangesAsync();
-        }
         public async Task<Folder> GetFolders(int? id)
         {   
             if(!DbFolder.DbFolders.Any()) await RestartDb();
             Folder searchOrRoot = 
-                await DbFolder.DbFolders.Include(m=>m.SubFolders).SingleOrDefaultAsync(m=>m.Id==id) 
-                ?? DbFolder.DbFolders.Include(m=>m.SubFolders).FirstOrDefault();
+                await DbFolder.DbFolders.Include(m=>m.SubFolders.Select(y=>y.SubFolders)).SingleOrDefaultAsync(m=>m.Id==id) 
+                ?? DbFolder.DbFolders.Include(m=>m.SubFolders.Select(y=>y.SubFolders)).FirstOrDefault();
             return searchOrRoot;
         }
         public async Task DeleteEverything()

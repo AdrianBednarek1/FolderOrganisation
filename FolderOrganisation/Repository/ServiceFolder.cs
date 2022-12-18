@@ -19,7 +19,6 @@ namespace FolderOrganisation.Repository
             await GetStructureFolders(structure, folder,-1);
             return structure;
         }
-
         private static async Task GetStructureFolders(List<ModelViewStructure> structure, Folder folder, int subFolderLevel)
         {
             subFolderLevel++;
@@ -30,7 +29,6 @@ namespace FolderOrganisation.Repository
                 await GetStructureFolders(structure,item,subFolderLevel);
             }
         }
-
         public static async Task<ModelViewFolder> GetFolders(int? id)
         {
             Folder folder = await repositoryFolder.GetFolders(id);
