@@ -25,7 +25,9 @@ namespace FolderOrganisation.Repository
             foreach (var item in folder.SubFolders.OrderBy(d=>d.CurrentFolder).ToList())
             {
                 Folder IncludedSubFolders = await repositoryFolder.GetFolders(item.Id);
-                structure.Add(new ModelViewStructure(Path.GetFileName(IncludedSubFolders.CurrentFolder), subFolderLevel));
+                string folderName = Path.GetFileName(IncludedSubFolders.CurrentFolder);
+                ModelViewStructure newModelView = new ModelViewStructure(folderName, subFolderLevel);
+                structure.Add(newModelView);
                 await GetStructureFolders(structure,item,subFolderLevel);
             }
         }
@@ -38,17 +40,24 @@ namespace FolderOrganisation.Repository
         public static async Task Delete(int id)
         {
             Folder folder = await repositoryFolder.GetFolders(id);
+            bool folderIsEmpty = folder==null;
+            if (folderIsEmpty) return;
             await repositoryFolder.Delete(folder);
         }
         public static async Task Create(ModelViewFolder model)
         {
             Folder parent = await repositoryFolder.GetFolders(model.Parent);
             Folder folder = new Folder(model.FullDirectory, parent);
+            bool nameExists = parent.SubFolders.SingleOrDefault(d=>d.CurrentFolder.Equals(folder.CurrentFolder))!=null;
+            if (nameExists) return;
             await repositoryFolder.CreateFolder(folder);
         }
 
         public static async Task Edit(ModelViewFolder model)
         {
+            Folder parent = await repositoryFolder.GetFolders(model.Parent);
+            bool nameExists = parent.SubFolders.SingleOrDefault(d=>d.CurrentFolder.Equals(model.FullDirectory))!=null;
+            if (nameExists) return;
             await repositoryFolder.Edit(model.Id, model.FullDirectory);
         }
         public static async Task RestartDb()

@@ -10,12 +10,10 @@ namespace FolderOrganisation.ViewModels
     {
         public string Name { get; set; }
         public int BranchLevel;
-
-
         public ModelViewStructure(string name, int branchLevel)
         {
             Name = "";
-            for (int i = 0; i < branchLevel; i++){Name += "|-------";}
+            for (int i = 0; i < branchLevel; i++){Name += "||--------------------";}
             Name += name;
         }
         public ModelViewStructure()

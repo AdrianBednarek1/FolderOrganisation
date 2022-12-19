@@ -37,7 +37,6 @@ namespace FolderOrganisation.Repository
         }
         public async Task Delete(Folder folder)
         {
-            if (await DbFolder.DbFolders.FindAsync(folder?.Id)==null) return;
             await DeleteSubFolders(folder.SubFolders);
             DbFolder.DbFolders.Remove(folder);  
             await DbFolder.SaveChangesAsync();
@@ -52,32 +51,23 @@ namespace FolderOrganisation.Repository
         }
         public async Task Edit(int id, string newPath)
         {
-            bool newPathExists = await DbFolder.DbFolders.FirstOrDefaultAsync(d => d.CurrentFolder.Equals(newPath)) != null;
-            if (newPathExists) return;
             Folder folder = await DbFolder.DbFolders.FindAsync(id);
             folder.CurrentFolder = newPath;
-            UpdateSubFolders(folder);
+            await EditSubFolders(folder);
             await DbFolder.SaveChangesAsync();
         }
-        private void UpdateSubFolders(Folder folder)
+        private async Task EditSubFolders(Folder folder)
         {
             foreach (var item in folder.SubFolders)
             {
                 string updatedPath = Path.Combine(folder.CurrentFolder, Path.GetFileName(item.CurrentFolder));
                 item.CurrentFolder = updatedPath;
-                if (item.SubFolders.Any()) UpdateSubFolders(item);
+                if (item.SubFolders.Any()) await EditSubFolders(await DbFolder.DbFolders.FindAsync(item.Id));
             }
         }
         public async Task CreateFolder(Folder createFolder)
         {
-            string path = createFolder.CurrentFolder;
-            bool pathAlreadyExists = await DbFolder.DbFolders.FirstOrDefaultAsync(d => d.CurrentFolder.Equals(path)) != null;
-            if (pathAlreadyExists) return;
-            await CreateFolderInDb(createFolder);
-        }
-        private async Task CreateFolderInDb(Folder createFolder)
-        {
-            Folder parent = DbFolder.DbFolders.FirstOrDefault(target => target.Id==createFolder.ParentFolder.Id);
+            Folder parent = await DbFolder.DbFolders.FindAsync(createFolder.ParentFolder.Id);
             parent.SubFolders.Add(createFolder);
             await DbFolder.SaveChangesAsync();
         }
