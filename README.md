@@ -1,4 +1,5 @@
 FolderOrganisation
+-isto kao i Manage folders samo što se koristi virtualni(izmišljeni direktorij)
 
 Korišten je Visual Studio 2022 MVC5, zajedno sa Microsoft SQL management studio i lokalnim serverom "LocalDb\MSSQLLocalDB"
 
